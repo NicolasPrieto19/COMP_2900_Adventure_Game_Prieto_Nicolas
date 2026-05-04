@@ -31,6 +31,6 @@ public class Adventurer
 
         public override string ToString()
     {
-        return $"Adventurer [hasLamp={hasLamp}, hasKey={hasKey}]";
+        return $"Adventurer[hasLamp={hasLamp}, hasKey={hasKey}]";
     }
 }
