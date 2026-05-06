@@ -6,8 +6,8 @@ public class AdventureGame
 {
     public readonly string GO_NORTH = "W";
     public readonly string GO_SOUTH = "S";
-    public readonly string GO_EAST = "A";
-    public readonly string GO_WEST = "D";
+    public readonly string GO_EAST = "D";
+    public readonly string GO_WEST = "A";
     public readonly string GET_LAMP = "L";
     public readonly string GET_KEY = "K";
     public readonly string OPEN_CHEST = "O";
@@ -17,6 +17,9 @@ public class AdventureGame
     private Room[,] dungeon;
     private int aRow;
     private int aCol;
+
+    private bool isChestOpen;
+    private bool hasPlayerQuit;
 
     public AdventureGame()
     {
@@ -55,22 +58,41 @@ public class AdventureGame
     {
         adventurer = new Adventurer();
 
-        Room rCenter = new Room();
-        rCenter.SetDescription("Room Center");
-        rCenter.SetNorth(true);
+        Room r1 = new Room();
+        r1.SetDescription("Room 1");
+        r1.SetSouth(true);
+        r1.SetEast(true);
+        r1.SetLamp(true);
 
-        Room rNorth = new Room();
-        rNorth.SetDescription("Room North");
-        rNorth.SetSouth(true);
+        Room r2 = new Room();
+        r2.SetDescription("Room 2");
+        r2.SetSouth(true);
+        r2.SetWest(true);
+        r2.SetKey(true);
+
+        Room r3 = new Room();
+        r3.SetDescription("Room 3");
+        r3.SetNorth(true);
+        r3.SetEast(true);
+        r3.SetChest(true);
+
+        Room r4 = new Room();
+        r4.SetDescription("Room 4");
+        r4.SetNorth(true);
+        r4.SetWest(true);
 
         dungeon = new Room[,]
         {
-            {rNorth},
-            {rCenter}
+            {r1, r2},
+            {r3, r4}
         };
 
         aRow = 1;
         aCol = 0;
+
+        isChestOpen= false;
+        hasPlayerQuit = false;
+
     }
 
     private void ShowGameStartScreen()
@@ -103,7 +125,7 @@ public class AdventureGame
 
     private bool IsValidInput(string input)
     {
-        string[] validInput = {GO_NORTH, GO_SOUTH, GO_EAST, GO_WEST, GET_LAMP, GET_KEY};
+        string[] validInput = {GO_NORTH, GO_SOUTH, GO_EAST, GO_WEST, GET_LAMP, GET_KEY, OPEN_CHEST, QUIT};
         if(!validInput.Contains(input))
         {
             Console.WriteLine("ERROR: Invalid input. Please Try Again");
@@ -125,6 +147,30 @@ public class AdventureGame
         {
             GoSouth(r);
         }
+        else if (input == GO_EAST)
+        {
+            GoEast(r);
+        }
+        else if (input == GO_WEST)
+        {
+            GoWest(r);
+        }
+        else if (input == GET_LAMP)
+        {
+            GetLamp(r);
+        }
+        else if (input == GET_KEY)
+        {
+            GetKey(r);
+        }
+        else if (input == OPEN_CHEST)
+        {
+            OpenChest(r);
+        }
+        else
+        {
+            Quit();
+        }
         return input;
     }
 
@@ -135,7 +181,7 @@ public class AdventureGame
 
     private bool IsGameOver()
     {
-        return false;
+        return isChestOpen || hasPlayerQuit;
     }
 
     private void ShowGameOverScreen()
@@ -165,5 +211,83 @@ public class AdventureGame
         {
             Console.WriteLine("You cannot go south!!\a");
         }
+    }
+
+    private void GoEast(Room r)
+    {
+        if (r.HasEast())
+        {
+            aCol += 1;
+        }
+        else
+        {
+            Console.WriteLine("You cannot go east!!\a");
+        }
+    }
+
+    private void GoWest(Room r)
+    {
+        if (r.HasWest())
+        {
+            aCol -= 1;
+        }
+        else
+        {
+            Console.WriteLine("You cannot go west!!\a");
+        }
+    }
+
+    private void GetLamp(Room r)
+    {
+        if (r.HasLamp())
+        {
+            Console.WriteLine("You got the lamp!!\a");
+            adventurer.SetLamp(true);
+            r.SetLamp(false);
+        }
+        else
+        {
+            Console.WriteLine("There is no lamp in this room!!\a");
+        }
+    }
+
+    private void GetKey(Room r)
+    {
+        if (r.HasKey())
+        {
+            Console.WriteLine("You got the key!!\a");
+            adventurer.SetKey(true);
+            r.SetKey(false);
+        }
+        else
+        {
+            Console.WriteLine("There is no key in this room!!\a");
+        }
+    }
+    
+    private void OpenChest(Room r)
+    {
+        if (r.HasChest())
+        {
+            if (adventurer.HasKey())
+            {
+                Console.WriteLine("You opened the chest and found the treasure!!\a");
+                isChestOpen = true;
+            }
+            else
+            {
+                Console.WriteLine("You need a key to open the chest!!\a");
+            }
+        }
+        else
+        {
+            Console.WriteLine("There is no chest in this room!!\a");
+        }
+    }
+
+     private void Quit()
+    {
+        Console.WriteLine("Thanks for playing Adventure Game!!");
+        hasPlayerQuit = true;
     }
 }
