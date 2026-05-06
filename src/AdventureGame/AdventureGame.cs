@@ -4,7 +4,15 @@ namespace AdventureGame;
 
 public class AdventureGame
 {
-    
+    public readonly string GO_NORTH = "W";
+    public readonly string GO_SOUTH = "S";
+    public readonly string GO_EAST = "A";
+    public readonly string GO_WEST = "D";
+    public readonly string GET_LAMP = "L";
+    public readonly string GET_KEY = "K";
+    public readonly string OPEN_CHEST = "O";
+    public readonly string QUIT = "Q";
+
     private Adventurer adventurer;
     private Room[,] dungeon;
     private int aRow;
@@ -47,14 +55,21 @@ public class AdventureGame
     {
         adventurer = new Adventurer();
 
-        Room r = new Room();
-         r.SetDescription("Room 0");
+        Room rCenter = new Room();
+        rCenter.SetDescription("Room Center");
+        rCenter.SetNorth(true);
+
+        Room rNorth = new Room();
+        rNorth.SetDescription("Room North");
+        rNorth.SetSouth(true);
+
         dungeon = new Room[,]
         {
-            {r}
+            {rNorth},
+            {rCenter}
         };
 
-        aRow = 0;
+        aRow = 1;
         aCol = 0;
     }
 
@@ -72,22 +87,45 @@ public class AdventureGame
 
     private void ShowInputOptions()
     {
-        return;
+        string options = ""
+
+        +$"GO NORTH [{GO_NORTH}] | GO EAST [{GO_EAST}] | GET LAMP [{GET_LAMP}] | OPEN CHEST [{OPEN_CHEST}]\n"
+        +$"GO SOUTH [{GO_SOUTH}] | GO WEST [{GO_WEST}] | GET KEY  [{GET_KEY}] | QUIT [{QUIT}]\n"
+        +$"> ";
+
+        Console.Write(options);
     }
 
     private string GetInput()
     {
-        return string.Empty;
+        return Console.ReadLine()!.ToUpper();
     }
 
     private bool IsValidInput(string input)
     {
+        string[] validInput = {GO_NORTH, GO_SOUTH, GO_EAST, GO_WEST, GET_LAMP, GET_KEY};
+        if(!validInput.Contains(input))
+        {
+            Console.WriteLine("ERROR: Invalid input. Please Try Again");
+            return false;
+        }
+
         return true;
     }
 
     private string ProcessInput(string input)
     {
-        return string.Empty;
+        Room r = dungeon[aRow, aCol];
+
+        if (input == GO_NORTH)
+        {
+            GoNorth(r);
+        }
+        else if (input == GO_SOUTH)
+        {
+            GoSouth(r);
+        }
+        return input;
     }
 
     private void UpdateGameState()
@@ -97,11 +135,35 @@ public class AdventureGame
 
     private bool IsGameOver()
     {
-        return true;
+        return false;
     }
 
     private void ShowGameOverScreen()
     {
-        Console.WriteLine("Thanks for playing!");
+
+    }
+
+    private void GoNorth(Room r)
+    {
+        if (r.HasNorth())
+        {
+            aRow -= 1;
+        }
+        else
+        {
+            Console.WriteLine("You cannot go north!!\a");
+        }
+    }
+
+    private void GoSouth(Room r)
+    {
+        if (r.HasSouth())
+        {
+            aRow += 1;
+        }
+        else
+        {
+            Console.WriteLine("You cannot go south!!\a");
+        }
     }
 }
