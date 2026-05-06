@@ -109,7 +109,7 @@ public class Room
 
     public void SetWest(bool b)
     {
-        hasEast = b;
+        hasWest = b;
     }
 
     public void SetDescription(string d)
